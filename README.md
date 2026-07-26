@@ -7,8 +7,8 @@ MVP bilingue (italiano/inglese) per il portfolio di un film editor e videomaker.
 Richiede Node.js 20 o superiore.
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 Il terminale mostrerà l'indirizzo locale da aprire nel browser.
@@ -16,10 +16,10 @@ Il terminale mostrerà l'indirizzo locale da aprire nel browser.
 ## Verifiche e build
 
 ```bash
-npm run lint
-npm run test
-npm run build
-npm run preview
+pnpm run lint
+pnpm run test
+pnpm run build
+pnpm run preview
 ```
 
 La build statica viene generata nella cartella `dist`.
