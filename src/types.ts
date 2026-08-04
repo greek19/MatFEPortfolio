@@ -12,7 +12,7 @@ export interface Project {
   roles: string[]
   duration: string
   featured: boolean
-  tone: string
+  poster: string
   description: Localized
   statement: Localized
   video: { provider: 'vimeo' | 'youtube'; id: string }
