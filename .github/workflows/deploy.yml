@@ -44,7 +44,8 @@ jobs:
             VERSION_DIR=".demo-worktrees/$BRANCH"
             git worktree add --detach "$VERSION_DIR" "origin/$BRANCH"
             pnpm --dir "$VERSION_DIR" install --frozen-lockfile
-            pnpm --dir "$VERSION_DIR" run build -- --base="/MatFEPortfolio/$BRANCH/"
+            pnpm --dir "$VERSION_DIR" exec tsc -b
+            pnpm --dir "$VERSION_DIR" exec vite build --base="/MatFEPortfolio/$BRANCH/"
             mkdir -p "demo-dist/$BRANCH"
             cp -R "$VERSION_DIR/dist/." "demo-dist/$BRANCH/"
             git worktree remove "$VERSION_DIR" --force
