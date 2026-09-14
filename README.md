@@ -1,78 +1,49 @@
-# MatFEPortfolio
+# MatFEPortfolio — Demo archive
 
-MVP bilingue (italiano/inglese) per il portfolio di un film editor e videomaker. Il concept unisce timeline astratta, cinema editoriale e archivio sperimentale, con un playhead/timecode come firma visiva.
+Il branch `demo` contiene esclusivamente il contenitore di presentazione usato per confrontare le diverse direzioni del portfolio. Le implementazioni originali restano isolate nei branch `v1`, `v2` e successivi.
+
+## Struttura pubblicata
+
+```text
+/MatFEPortfolio/       barra di confronto
+/MatFEPortfolio/v1/    build del branch v1
+/MatFEPortfolio/v2/    build del branch v2
+```
+
+La versione scelta viene caricata sotto la barra senza modificare il codice del relativo branch. Il parametro `?version=v1` permette inoltre di condividere direttamente una specifica variante.
+
+## Aggiungere una nuova versione
+
+1. Creare e pubblicare il nuovo branch, per esempio `v3`.
+2. Aggiungere una voce a `public/demo-versions.json`:
+
+```json
+{
+  "id": "v3",
+  "branch": "v3",
+  "label": "Versione 03",
+  "description": "Direzione sintetica"
+}
+```
+
+3. Eseguire un push sul branch `demo`.
+
+Il workflow legge la configurazione, recupera ogni branch elencato, crea le build con i rispettivi percorsi e pubblica l'archivio completo su GitHub Pages.
 
 ## Avvio locale
-
-Richiede Node.js 20 o superiore.
 
 ```bash
 pnpm install
 pnpm run dev
 ```
 
-Il terminale mostrerà l'indirizzo locale da aprire nel browser.
-
-## Verifiche e build
+Durante lo sviluppo locale il contenitore carica le versioni dall'indirizzo GitHub Pages già pubblicato. La build del contenitore si verifica con:
 
 ```bash
 pnpm run lint
-pnpm run test
 pnpm run build
-pnpm run preview
 ```
 
-La build statica viene generata nella cartella `dist`.
+## Deploy
 
-## Gestione dei contenuti
-
-I contenuti sostituibili sono centralizzati in `src/data.ts`:
-
-- `copy`: testi dell'interfaccia in italiano e inglese;
-- `categoryLabels`: nomi tradotti delle categorie;
-- `projects`: elenco dei progetti, metadati, ruoli, descrizioni e riferimenti video.
-
-Ogni progetto accetta un provider `vimeo` o `youtube` e il relativo ID. I player vengono caricati soltanto all'apertura del progetto. Per sostituire l'identità provvisoria, aggiornare anche titolo e descrizione in `index.html`, indirizzo e-mail e link social in `src/App.tsx`.
-
-I colori `tone` dei progetti alimentano i placeholder visuali e possono essere mantenuti come colore dominante del progetto anche quando verranno aggiunti poster o preview reali.
-
-## GitHub Pages
-
-`vite.config.ts` usa il base path `/MatFEPortfolio/`, coerente con il repository `greek19/MatFEPortfolio`.
-
-Il workflow `.github/workflows/deploy.yml`:
-
-1. parte a ogni push sul branch `main` oppure manualmente;
-2. installa le dipendenze;
-3. crea la build;
-4. pubblica `dist` su GitHub Pages.
-
-Nel repository GitHub, impostare **Settings → Pages → Source → GitHub Actions**. Nessun backend o CMS è richiesto.
-
-## Struttura
-
-```text
-src/
-  App.tsx       interfaccia e interazioni
-  data.ts       contenuti bilingui e progetti
-  types.ts      struttura dei dati
-  styles.css    design system, responsive e reduced motion
-```
-
-## Prestazioni e accessibilità
-
-- player Vimeo/YouTube caricati solo su richiesta;
-- iframe con lazy loading;
-- nessun autoplay con audio;
-- layout specifici desktop e mobile;
-- navigazione da tastiera e collegamento “salta al contenuto”;
-- supporto a `prefers-reduced-motion`;
-- animazioni principali realizzate con CSS, senza WebGL nell'MVP.
-
-## Passi successivi
-
-- sostituire identità, biografia, contatti e link social;
-- inserire i progetti e gli ID video reali;
-- aggiungere poster WebP/AVIF e brevi preview WebM/MP4 ottimizzate;
-- aggiungere ritratto e materiali di backstage;
-- eseguire una revisione contenuti e accessibilità con i dati definitivi.
+Il workflow `.github/workflows/deploy.yml` parte a ogni push sul branch `demo` e può essere avviato anche manualmente. Il repository deve utilizzare **Settings → Pages → Source → GitHub Actions**.

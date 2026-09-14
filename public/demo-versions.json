@@ -1,0 +1,14 @@
+[
+  {
+    "id": "v1",
+    "branch": "v1",
+    "label": "Versione 01",
+    "description": "Editoriale / Essenziale"
+  },
+  {
+    "id": "v2",
+    "branch": "v2",
+    "label": "Versione 02",
+    "description": "Sperimentale / Cinematica"
+  }
+]
