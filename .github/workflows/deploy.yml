@@ -2,7 +2,7 @@ name: Deploy portfolio demo to GitHub Pages
 
 on:
   push:
-    branches: [demo]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -20,6 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
+          ref: demo
           fetch-depth: 0
       - uses: pnpm/action-setup@v6
         with:

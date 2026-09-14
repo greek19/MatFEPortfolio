@@ -26,7 +26,7 @@ La versione scelta viene caricata sotto la barra senza modificare il codice del 
 }
 ```
 
-3. Eseguire un push sul branch `demo`.
+3. Aggiornare `main` allo stesso commit di `demo` e pubblicare `main`.
 
 Il workflow legge la configurazione, recupera ogni branch elencato, crea le build con i rispettivi percorsi e pubblica l'archivio completo su GitHub Pages.
 
@@ -46,4 +46,4 @@ pnpm run build
 
 ## Deploy
 
-Il workflow `.github/workflows/deploy.yml` parte a ogni push sul branch `demo` e può essere avviato anche manualmente. Il repository deve utilizzare **Settings → Pages → Source → GitHub Actions**.
+Il workflow `.github/workflows/deploy.yml` parte a ogni push sul branch `main` e può essere avviato anche manualmente. `main` rispecchia il contenitore pubblicato, mentre `demo` ne conserva la linea di sviluppo separata. Il repository deve utilizzare **Settings → Pages → Source → GitHub Actions**.
