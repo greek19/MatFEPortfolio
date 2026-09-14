@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy portfolio demo to GitHub Pages
 
 on:
   push:
@@ -19,6 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: demo
+          fetch-depth: 0
       - uses: pnpm/action-setup@v6
         with:
           version: 11.9.0
@@ -27,14 +30,31 @@ jobs:
           node-version: 24
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run build
+      - name: Build demo shell
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm run build
+          mv dist demo-dist
+      - name: Build configured portfolio versions
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSIONS=$(node -e "const fs=require('fs'); const items=JSON.parse(fs.readFileSync('public/demo-versions.json','utf8')); process.stdout.write(items.map(item => item.branch).join(' '))")
+          for BRANCH in $VERSIONS; do
+            VERSION_DIR=".demo-worktrees/$BRANCH"
+            git worktree add --detach "$VERSION_DIR" "origin/$BRANCH"
+            pnpm --dir "$VERSION_DIR" install --frozen-lockfile
+            pnpm --dir "$VERSION_DIR" run build -- --base="/MatFEPortfolio/$BRANCH/"
+            mkdir -p "demo-dist/$BRANCH"
+            cp -R "$VERSION_DIR/dist/." "demo-dist/$BRANCH/"
+            git worktree remove "$VERSION_DIR" --force
+          done
       - uses: actions/configure-pages@v5
         with:
           enablement: true
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: ./dist
+          path: ./demo-dist
 
   deploy:
     environment:
