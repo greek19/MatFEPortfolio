@@ -1,78 +1,75 @@
-# MatFEPortfolio
+# Matteo Cataldo — archivio demo
 
-MVP bilingue (italiano/inglese) per il portfolio di un film editor e videomaker. Il concept unisce timeline astratta, cinema editoriale e archivio sperimentale, con un playhead/timecode come firma visiva.
+Il branch `demo` contiene la barra di confronto e il selettore delle palette. Le implementazioni restano separate nei branch `v1`, `v2` e `v3`; non sono fuse in un unico sorgente.
+
+## Versioni
+
+- **V1 — Editoriale:** portfolio chiaro e lineare, conservato.
+- **V2 — Sperimentale:** collage, archivio Experience / Index, conservato.
+- **V3 — Portfolio essenziale:** 46 video pubblici da Vimeo, categorie a scomparsa, viste Lavori / About / Contact senza scorrimento tra sezioni, crediti essenziali e pagine SEO dedicate. Nessuna ricerca o componente AI.
+
+Il manifest `public/demo-versions.json` stabilisce versioni, branch e ordine. La demo apre le build sullo stesso dominio, anche in locale: non carica più le vecchie versioni online.
 
 ## Avvio locale
 
-Richiede Node.js 20 o superiore.
+Node 24 e pnpm. Le tre copie di lavoro sono nella cartella sorella `MatFEPortfolio-versions`:
 
-```bash
-pnpm install
-pnpm run dev
+```text
+MatFEPortfolio/                branch demo
+MatFEPortfolio-versions/v1/     branch v1
+MatFEPortfolio-versions/v2/     branch v2
+MatFEPortfolio-versions/v3/     branch v3
 ```
 
-Il terminale mostrerà l'indirizzo locale da aprire nel browser.
-
-## Verifiche e build
+Per ricrearle su un'altra macchina, dal repository:
 
 ```bash
-pnpm run lint
-pnpm run test
-pnpm run build
-pnpm run preview
+git worktree add ../MatFEPortfolio-versions/v1 v1
+git worktree add ../MatFEPortfolio-versions/v2 v2
+git worktree add ../MatFEPortfolio-versions/v3 v3
+pnpm install --frozen-lockfile
+pnpm --dir ../MatFEPortfolio-versions/v1 install --frozen-lockfile
+pnpm --dir ../MatFEPortfolio-versions/v2 install --frozen-lockfile
+pnpm --dir ../MatFEPortfolio-versions/v3 install --frozen-lockfile
+pnpm versions:build
+pnpm dev
 ```
 
-La build statica viene generata nella cartella `dist`.
+Aprire `http://localhost:5173/MatFEPortfolio/?version=v3`. È possibile passare un percorso diverso a `pnpm versions:build PERCORSO_WORKTREE`. Dopo modifiche a una versione, ripetere `versions:build` e ricaricare il browser. Le cartelle generate `public/v1`, `public/v2`, `public/v3` sono ignorate da Git. Per sviluppare una singola versione con hot reload usare `pnpm dev` nella sua cartella.
 
-## Gestione dei contenuti
+## Palette condivise
 
-I contenuti sostituibili sono centralizzati in `src/data.ts`:
+`src/themes.ts` è la sorgente delle sei palette; `src/theme.css` contiene le correzioni dei componenti esistenti. Eseguire `pnpm themes:sync` dopo averle modificate per copiarle nelle tre versioni. Ogni versione importa questi file dal proprio `main.tsx`, quindi funziona anche da sola.
 
-- `copy`: testi dell'interfaccia in italiano e inglese;
-- `categoryLabels`: nomi tradotti delle categorie;
-- `projects`: elenco dei progetti, metadati, ruoli, descrizioni e riferimenti video.
+Il tema originale conserva i colori propri di ciascuna versione. Le altre palette cambiano carta, inchiostro, accento e dettagli. La scelta persiste in localStorage (se disponibile), passa agli iframe tramite messaggi validati per origine e mittente e può essere condivisa con `?version=v2&theme=orange`. L'apertura a schermo intero conserva il tema.
 
-Ogni progetto accetta un provider `vimeo` o `youtube` e il relativo ID. I player vengono caricati soltanto all'apertura del progetto. Per sostituire l'identità provvisoria, aggiornare anche titolo e descrizione in `index.html`, indirizzo e-mail e link social in `src/App.tsx`.
+### Riferimenti cromatici (ricerca settembre 2026)
 
-I colori `tone` dei progetti alimentano i placeholder visuali e possono essere mantenuti come colore dominante del progetto anche quando verranno aggiunti poster o preview reali.
+Interpretazioni per il web, non codici ufficiali né una classifica di popolarità:
+
+- **Cosmic Orange:** ispirato alla finitura [iPhone 17 Pro di Apple](https://support.apple.com/en-my/125090).
+- **Transformative Teal:** ispirato al [colore 2026 di WGSN e Coloro](https://www.wgsn.com/de/blog/die-farbe-des-jahres-2026-transformative-teal).
+- **Cloud Dancer:** ispirato al [colore 2026 Pantone](https://www.pantone.com/na/en-us/color-of-the-year/2026).
+- **Electric Blue** e **Plum / Butter:** proposte editoriali complementari.
+
+I test verificano il contrasto dei token di testo: inchiostro/carta >= 7:1, inchiostro/accento e dettaglio/carta >= 4.5:1. Non equivalgono a un audit di accessibilità completo dei vecchi layout.
+
+## Verifiche
+
+```bash
+pnpm lint
+pnpm test
+pnpm build
+```
+
+Ripetere questi controlli nei singoli worktree. La V3 ha test per completezza dei video, crediti, sicurezza dei metadati e pagine SEO; `node scripts/check-build.mjs` nella V3 verifica tutte le 46 pagine generate.
 
 ## GitHub Pages
 
-`vite.config.ts` usa il base path `/MatFEPortfolio/`, coerente con il repository `greek19/MatFEPortfolio`.
+Il workflow della demo parte su push di `demo` o `main`, oppure manualmente selezionando il branch `demo`. Recupera il branch demo e i branch configurati dal remoto, compila ogni versione con base `/MatFEPortfolio/vN/` e pubblica un unico artefatto. Settings → Pages → Source deve essere GitHub Actions.
 
-Il workflow `.github/workflows/deploy.yml`:
+Prima di un deploy pubblicare i cambiamenti di **tutti** i branch versione, quindi il branch demo. Un push soltanto a v1/v2/v3 non ricostruisce la demo: avviare poi manualmente il suo workflow o pubblicare una modifica alla demo. Non è necessario unire V3 in main.
 
-1. parte a ogni push sul branch `main` oppure manualmente;
-2. installa le dipendenze;
-3. crea la build;
-4. pubblica `dist` su GitHub Pages.
+Le versioni sono raggiungibili anche direttamente a `/MatFEPortfolio/v1/`, `/v2/`, `/v3/`. In locale la demo usa esplicitamente `index.html` per evitare il fallback SPA di Vite.
 
-Nel repository GitHub, impostare **Settings → Pages → Source → GitHub Actions**. Nessun backend o CMS è richiesto.
-
-## Struttura
-
-```text
-src/
-  App.tsx       interfaccia e interazioni
-  data.ts       contenuti bilingui e progetti
-  types.ts      struttura dei dati
-  styles.css    design system, responsive e reduced motion
-```
-
-## Prestazioni e accessibilità
-
-- player Vimeo/YouTube caricati solo su richiesta;
-- iframe con lazy loading;
-- nessun autoplay con audio;
-- layout specifici desktop e mobile;
-- navigazione da tastiera e collegamento “salta al contenuto”;
-- supporto a `prefers-reduced-motion`;
-- animazioni principali realizzate con CSS, senza WebGL nell'MVP.
-
-## Passi successivi
-
-- sostituire identità, biografia, contatti e link social;
-- inserire i progetti e gli ID video reali;
-- aggiungere poster WebP/AVIF e brevi preview WebM/MP4 ottimizzate;
-- aggiungere ritratto e materiali di backstage;
-- eseguire una revisione contenuti e accessibilità con i dati definitivi.
+Per aggiungere V4: creare il branch, aggiungere il manifest, importare il ponte temi, aggiornare `themes:sync` e `.gitignore`, pubblicare il branch e ricostruire la demo. Nessun CMS o server necessario.
