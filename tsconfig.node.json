@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
     "composite": true,
+    "target": "ES2020",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
     "noEmit": true
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "scripts/**/*.ts", "src/data.ts", "src/types.ts", "src/seo.ts", "src/content/**/*"]
 }
