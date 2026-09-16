@@ -1,0 +1,12 @@
+/* Shared semantic colour overrides. Original keeps each version's art direction. */
+html[data-theme], html[data-theme] body { background:var(--paper); color:var(--ink); }
+html[data-theme] .site-header.is-compact,
+html[data-theme] .modal-bar,
+html[data-theme] .work-section .filters { background:var(--paper); color:var(--ink); }
+html[data-theme] .hero h1 { color:var(--paper); }
+html[data-theme] .hero-copy h1 { color:var(--ink); }
+html[data-theme] .hero-frame { background:var(--paper); }
+html[data-theme] .playhead-track { background:var(--line); }
+html[data-theme] .contact-section,
+html[data-theme] .work-index-row.is-active { color:var(--ink); }
+html[data-theme] .contact-section { background:var(--acid); }
