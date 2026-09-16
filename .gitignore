@@ -1,5 +1,10 @@
 node_modules
 dist
+public/v1/
+public/v2/
+public/v3/
+.demo-worktrees/
+demo-dist/
 .DS_Store
 *.local
 *.tsbuildinfo

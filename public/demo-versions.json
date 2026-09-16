@@ -10,5 +10,6 @@
     "branch": "v2",
     "label": "Versione 02",
     "description": "Sperimentale / Cinematica"
-  }
+  },
+  { "id": "v3", "branch": "v3", "label": "Versione 03", "description": "Portfolio / Essenziale" }
 ]
