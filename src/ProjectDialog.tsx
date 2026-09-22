@@ -34,6 +34,7 @@ function Video({ project, lang }: { project: Project; lang: Lang }) {
   const reveal = () => { setVisible(true); clearTimeout(timer.current); timer.current = setTimeout(() => setVisible(false), 1700) }
   const toggle = () => { const action = playing ? player.current?.pause() : player.current?.play(); action?.catch(() => setError(true)) }
   return <div className={`video-shell${visible || !playing ? ' show-controls' : ''}`} ref={shell} onPointerMove={reveal} onPointerDown={reveal}>
+    <img className="video-bg" src={project.poster} alt="" aria-hidden="true" />
     {!ready ? <button className="video-start" onClick={() => setReady(true)}><Play /> Play</button> : project.video.provider === 'youtube' ? <iframe src={`https://www.youtube-nocookie.com/embed/${project.video.id}?autoplay=1&mute=1&playsinline=1`} title={project.title} allow="autoplay; fullscreen" allowFullScreen /> : <>
       <iframe ref={iframe} src={`https://player.vimeo.com/video/${project.video.id}?autoplay=1&muted=1&controls=0&playsinline=1&dnt=1`} title={project.title} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen />
       <button className="video-surface" onClick={toggle} aria-label={playing ? (lang === 'it' ? 'Pausa video' : 'Pause video') : 'Play video'} />

@@ -5,6 +5,7 @@ export const themes = {
   cloud: { name: 'Cloud Dancer', paper: '#f5f3ed', ink: '#34332e', accent: '#ded9cc', flare: '#655a48' },
   blue: { name: 'Electric Blue', paper: '#e9edf7', ink: '#172554', accent: '#aac4ff', flare: '#234dde' },
   plum: { name: 'Plum / Butter', paper: '#f5edda', ink: '#432639', accent: '#e8d79b', flare: '#8a365f' },
+  dark: { name: 'Dark Room', paper: '#0d0d0b', ink: '#f4f0e6', accent: '#465c12', flare: '#ff5a36' },
 } as const
 export type ThemeId = keyof typeof themes
 export const isTheme = (value: unknown): value is ThemeId => typeof value === 'string' && Object.prototype.hasOwnProperty.call(themes, value)

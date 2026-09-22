@@ -16,10 +16,12 @@ export default function App() {
   const [filter,setFilter]=useState<Category|'all'>('all')
   const [filtersOpen,setFiltersOpen]=useState(false)
   const [selected,setSelected]=useState(initialProject?.slug ?? projects[0].slug)
+  const [previewSound,setPreviewSound]=useState(false)
   const [active,setActive]=useState<Project|null>(initialProject)
   const panel=useRef<HTMLElement>(null)
   const filters=useRef<HTMLDivElement>(null)
   const filterButton=useRef<HTMLButtonElement>(null)
+  const filterCloseTimer=useRef<ReturnType<typeof setTimeout>>()
   const openedHere=useRef(false)
   const t=copy[lang]
   const it=lang==='it'
@@ -45,10 +47,14 @@ export default function App() {
   useEffect(()=>{
     if(layout==='cinema') document.querySelector('.filmstrip .selected')?.scrollIntoView({block:'nearest',inline:'nearest',behavior:'instant'})
   },[chosen?.slug,layout])
+  useEffect(()=>()=>clearTimeout(filterCloseTimer.current),[])
+  const openFilters=()=>{clearTimeout(filterCloseTimer.current);setFiltersOpen(true)}
+  const closeFiltersSoon=()=>{clearTimeout(filterCloseTimer.current);filterCloseTimer.current=setTimeout(()=>setFiltersOpen(false),140)}
   function navigate(next:View){setView(next);setFiltersOpen(false);history.pushState({},'',`${base}${location.search}#${next}`);requestAnimationFrame(()=>panel.current?.focus())}
   function openProject(project:Project){openedHere.current=true;history.pushState({},'',`${projectPath(base,project)}${location.search}`);setActive(project)}
   function closeProject(){setActive(null);if(openedHere.current){openedHere.current=false;history.back()}else history.replaceState({},'',`${base}${location.search}`)}
-  const move=(direction:number)=>{if(visible.length)setSelected(visible[(index+direction+visible.length)%visible.length].slug)}
+  const selectPreview=(slug:string,sound=true)=>{setSelected(slug);setPreviewSound(sound)}
+  const move=(direction:number)=>{if(visible.length)selectPreview(visible[(index+direction+visible.length)%visible.length].slug)}
   return <div className="studio">
     <div className="grain" aria-hidden="true" />
     <header className="studio-header">
@@ -60,7 +66,7 @@ export default function App() {
       {view==='work'?<>
         <h1 className="sr-only">Matteo Cataldo — Portfolio video</h1>
         <div className="work-toolbar">
-          <div className="category-control" ref={filters}>
+          <div className="category-control" ref={filters} onPointerEnter={(event)=>{if(event.pointerType==='mouse')openFilters()}} onPointerLeave={(event)=>{if(event.pointerType==='mouse')closeFiltersSoon()}}>
             <button ref={filterButton} className="filter-toggle" aria-expanded={filtersOpen} aria-controls="category-options" onClick={()=>setFiltersOpen(!filtersOpen)}>{filter==='all'?t.filters:categoryLabels[filter][lang]}<ChevronDown size={12}/></button>
             {filtersOpen&&<div id="category-options" className="category-options" role="group" aria-label={t.filters}>{(['all',...categories] as const).map(cat=><button key={cat} aria-pressed={filter===cat} onClick={()=>{setFilter(cat);setFiltersOpen(false);filterButton.current?.focus()}}>{cat==='all'?t.all:categoryLabels[cat][lang]}<span>{cat==='all'?projects.length:projects.filter(p=>p.category===cat).length}</span></button>)}</div>}
           </div>
@@ -68,10 +74,13 @@ export default function App() {
         </div>
         {layout==='cinema'&&chosen?<section className="cinema" aria-label={it?'Progetti video':'Video projects'}>
           <a className="main-frame" key={chosen.slug} href={projectPath(base,chosen)} onClick={e=>{if(!e.ctrlKey&&!e.metaKey&&!e.shiftKey){e.preventDefault();openProject(chosen)}}} aria-label={`${t.view}: ${chosen.client} ${chosen.title}`}>
-            <img src={chosen.poster} alt={`${chosen.client} — ${chosen.title}`} fetchPriority="high"/>
-            <span className="frame-play" aria-hidden="true"><Play size={22} fill="currentColor"/></span>
+            <img className="frame-bg" src={chosen.poster} alt="" aria-hidden="true" fetchPriority="high"/>
+            {chosen.video.provider==='vimeo' && !active
+              ? <iframe key={`${chosen.video.id}-${previewSound ? 'sound' : 'mute'}`} className="frame-video" src={`https://player.vimeo.com/video/${chosen.video.id}?autoplay=1&muted=${previewSound ? 0 : 1}&controls=0&playsinline=1&dnt=1&loop=1`} title={`${chosen.client} — ${chosen.title}`} allow="autoplay; fullscreen; picture-in-picture" aria-hidden="true" tabIndex={-1} />
+              : <img className="frame-image" src={chosen.poster} alt={`${chosen.client} — ${chosen.title}`} fetchPriority="high"/>}
+            {chosen.video.provider!=='vimeo'&&<span className="frame-play" aria-hidden="true"><Play size={22} fill="currentColor"/></span>}
           </a>
-          <div className="filmstrip" aria-label={it?'Seleziona un video':'Select a video'}>{visible.map(p=><button key={p.slug} className={chosen.slug===p.slug?'selected':''} aria-pressed={chosen.slug===p.slug} onClick={()=>setSelected(p.slug)} aria-label={`${p.client} — ${p.title}${p.variant?` / ${p.variant}`:''}`} title={`${p.client} — ${p.title}`}><img src={p.poster} alt="" loading="lazy"/><span>{p.number}</span></button>)}</div>
+          <div className="filmstrip" aria-label={it?'Seleziona un video':'Select a video'}>{visible.map(p=><button key={p.slug} className={chosen.slug===p.slug?'selected':''} aria-pressed={chosen.slug===p.slug} onClick={()=>selectPreview(p.slug)} aria-label={`${p.client} — ${p.title}${p.variant?` / ${p.variant}`:''}`} title={`${p.client} — ${p.title}`}><img src={p.poster} alt="" loading="lazy"/><span>{p.number}</span></button>)}</div>
           <div className="film-caption"><div><span>{chosen.client}</span><h2>{chosen.title}{chosen.variant&&/teaser|trailer|behind/i.test(chosen.variant)&&<small> / {chosen.variant}</small>}</h2></div><div className="scene-controls"><span>{String(index+1).padStart(2,'0')} / {visible.length}</span><button onClick={()=>move(-1)} aria-label={it?'Video precedente':'Previous video'}><ArrowLeft size={18}/></button><button onClick={()=>move(1)} aria-label={it?'Video successivo':'Next video'}><ArrowRight size={18}/></button></div></div>
         </section>:<section className="project-grid" aria-label={it?'Tutti i video':'All videos'}>{visible.map(p=><a key={p.slug} href={projectPath(base,p)} onClick={e=>{if(!e.ctrlKey&&!e.metaKey&&!e.shiftKey){e.preventDefault();openProject(p)}}}><img src={p.poster} alt={`${p.client} — ${p.title}`} loading="lazy"/><span>{p.client}</span><h2>{p.title}{p.variant&&/teaser|trailer|behind/i.test(p.variant)&&<small> / {p.variant}</small>}</h2></a>)}</section>}
       </>:view==='about'?<section className="editorial-page"><h1>About</h1><div><p className="about-intro">{t.aboutBody}</p><p>{t.aboutNote}</p></div></section>:<section className="editorial-page"><h1>Contact</h1><a className="contact-action" href="https://vimeo.com/matteocataldo" target="_blank" rel="noreferrer">Vimeo <ArrowUpRight size={30}/></a></section>}
