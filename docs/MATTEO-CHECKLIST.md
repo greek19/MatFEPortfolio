@@ -1,10 +1,10 @@
-# Portfolio — cosa chiedere a Matteo
+# Portfolio
 
 Aggiornato l'8 ottobre 2026.
 
 ## Da fare adesso
 
-- [ ] Confermare il profilo sorgente: https://vimeo.com/matteocataldo.
+- [x] Confermare il profilo sorgente: https://vimeo.com/matteocataldo.
 - [ ] Confermare che tutti gli upload pubblici e incorporabili possano comparire nel portfolio fino alla creazione della Showcase.
 - [ ] Concordare la gestione del token API: creato da Matteo, oppure dal responsabile tecnico per leggere esclusivamente dati pubblici.
 - [ ] Verificare che i video selezionati siano pubblici e incorporabili. Il servizio attuale esclude video privati, non elencati, con password, limitati a determinati domini o ancora in elaborazione.
@@ -26,14 +26,14 @@ Non servono password dell'account, permessi di upload, modifica, cancellazione o
 3. Aprire la sezione di autenticazione / Personal Access Tokens.
 4. Selezionare “Authenticated (you)” per collegare il token al profilo di Matteo.
 5. Abilitare soltanto lo scope pubblico di lettura (`public`). Non abilitare `private`, `edit`, `delete`, `upload` o altre capacità non richieste.
-6. Generare il token e conservarlo in modo sicuro. Se la schermata propone permessi differenti, fermarsi e verificarli con il responsabile tecnico.
-7. Inserirlo direttamente nel servizio Cloudflare come segreto `VIMEO_TOKEN`, oppure consegnarlo al responsabile tecnico tramite un gestore di password con condivisione protetta. Mai inserirlo in questo documento, in GitHub, in chat o nel codice frontend. Non condividere la password Vimeo.
+6. Generare il token e conservarlo in modo sicuro. Se la schermata propone permessi differenti, fermarsi e verificarli.
+7. (FRA) Inserirlo direttamente nel servizio Cloudflare come secret `VIMEO_TOKEN`.
 
 Cloudflare: Workers & Pages → matteo-portfolio-catalog → Settings → Variables and Secrets → Add → tipo Secret → nome VIMEO_TOKEN. Serve accesso autorizzato all'account Cloudflare; non condividere il login per questa operazione.
 
 ## Showcase — da preparare successivamente
 
-- [ ] Creare una raccolta “Portfolio — Matteo Cataldo”.
+- [ ] Creare una raccolta “Portfolio — Matteo Cataldo” (TBD name).
 - [ ] Inserire soltanto i video da mostrare sul sito.
 - [ ] Impostare la raccolta pubblica per la configurazione prevista.
 - [ ] Ordinare i video secondo la priorità desiderata.

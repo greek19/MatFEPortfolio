@@ -71,7 +71,7 @@ export default function App() {
     }).catch(()=>{/* Keep the bundled catalog on network or validation failure. */}).finally(()=>clearTimeout(timeout))
     return()=>{controller.abort();clearTimeout(timeout)}
   },[])
-  const [lang,setLang]=useState<Lang>('it')
+  const [lang]=useState<Lang>('en')
   const [view,setView]=useState<View>(readView)
   const [layout,setLayout]=useState<'cinema'|'grid'>('cinema')
   const [filter,setFilter]=useState<Category|'all'>('all')
@@ -89,7 +89,7 @@ export default function App() {
   const filterCloseTimer=useRef<ReturnType<typeof setTimeout>>()
   const openedHere=useRef(false)
   const t=copy[lang]
-  const it=lang==='it'
+  const it=false
   const categories=[...new Set(projects.map(p=>p.category))]
   const visible=useMemo(()=>projects.filter(p=>filter==='all'||p.category===filter),[filter,projects])
   const chosen=visible.find(p=>p.slug===selected) ?? visible[0]
@@ -137,7 +137,7 @@ export default function App() {
     <header className="studio-header">
       <button className="identity" onClick={()=>navigate('work')} aria-label="Matteo Cataldo — Portfolio"><strong>Matteo Cataldo</strong><small>EDITOR & COLORIST</small></button>
       <nav aria-label={it?'Navigazione principale':'Main navigation'}>{(['work','about','contact'] as View[]).map(item=><button key={item} aria-current={view===item?'page':undefined} onClick={()=>navigate(item)}>{t.nav[item]}</button>)}</nav>
-      <div className="header-end"><a href="https://vimeo.com/matteocataldo" target="_blank" rel="noreferrer">Vimeo <ArrowUpRight size={12}/></a><div className="language">{(['it','en'] as Lang[]).map(l=><button key={l} aria-pressed={lang===l} onClick={()=>setLang(l)}>{l.toUpperCase()}</button>)}</div></div>
+      <div className="header-end"><a href="https://vimeo.com/matteocataldo" target="_blank" rel="noreferrer">Vimeo <ArrowUpRight size={12}/></a><span className="site-language" aria-label="Site language">EN</span></div>
     </header>
     <main id="main" ref={panel} tabIndex={-1} className={`workspace view-${view}`}>
       {view==='work'?<>
@@ -172,7 +172,7 @@ export default function App() {
         </section>:<section className="project-grid" aria-label={it?'Tutti i video':'All videos'}>{visible.map(p=><a key={p.slug} href={projectPath(base,p)} onClick={e=>{if(!e.ctrlKey&&!e.metaKey&&!e.shiftKey){e.preventDefault();openProject(p)}}}><img src={p.poster} alt={`${p.client} — ${p.title}`} loading="lazy"/><span>{p.client}</span><h2>{p.title}{p.variant&&/teaser|trailer|behind/i.test(p.variant)&&<small> / {p.variant}</small>}</h2></a>)}</section>}
       </>:view==='about'?<section className="editorial-page"><h1>About</h1><div><p className="about-intro">{t.aboutBody}</p><p>{t.aboutNote}</p></div></section>:<section className="editorial-page"><h1>Contact</h1><a className="contact-action" href="https://vimeo.com/matteocataldo" target="_blank" rel="noreferrer">Vimeo <ArrowUpRight size={30}/></a></section>}
     </main>
-    <footer className="studio-footer"><span>© {new Date().getFullYear()} Matteo Cataldo</span></footer>
+    <footer className="studio-footer"><span>© {new Date().getFullYear()} Matteo Cataldo</span><a href={`${base}privacy/`}>Privacy Policy</a></footer>
     {active&&<ProjectDialog project={active} lang={lang} close={closeProject}/>}
   </div>
 }

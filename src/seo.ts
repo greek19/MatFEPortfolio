@@ -27,7 +27,7 @@ export function videoSchema(base:string, project:Project) {
 export function portfolioSchema(base:string, projects:Project[]) {
   return { '@context':'https://schema.org', '@graph':[
     {'@type':'Person','@id':`${siteOrigin+base}#matteo`,name:'Matteo Cataldo',url:siteOrigin+base,jobTitle:'Film Editor & Colorist',sameAs:['https://vimeo.com/matteocataldo']},
-    {'@type':'WebSite','@id':`${siteOrigin+base}#website`,url:siteOrigin+base,name:'Matteo Cataldo — Portfolio',inLanguage:'it',about:{'@id':`${siteOrigin+base}#matteo`}},
+    {'@type':'WebSite','@id':`${siteOrigin+base}#website`,url:siteOrigin+base,name:'Matteo Cataldo — Portfolio',inLanguage:'en',about:{'@id':`${siteOrigin+base}#matteo`}},
     {'@type':'CollectionPage',url:siteOrigin+base,name:'Matteo Cataldo — Portfolio', mainEntity:{'@type':'ItemList',numberOfItems:projects.length,itemListElement:projects.map((p,index) => ({'@type':'ListItem',position:index+1,name:p.originalTitle,url:siteOrigin+projectPath(base,p)}))}},
   ]}
 }
@@ -43,7 +43,7 @@ export function updatePageMeta(base:string, project:Project|null, projects:Proje
   setMeta('description',meta.description)
   setMeta('robots',robotsPolicy)
   setMeta('og:site_name','Matteo Cataldo — Portfolio',true)
-  setMeta('og:locale','it_IT',true)
+  setMeta('og:locale','en_GB',true)
   setMeta('og:image:alt',meta.title,true)
   for (const [key,value] of Object.entries({title:meta.title,description:meta.description,url:meta.url,image:meta.image,type:project?'video.other':'website'})) setMeta(`og:${key}`,value,true)
   for (const [key,value] of Object.entries({title:meta.title,description:meta.description,image:meta.image,card:'summary_large_image', 'image:alt':meta.title})) setMeta(`twitter:${key}`,value)
