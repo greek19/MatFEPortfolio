@@ -1,0 +1,20 @@
+name = "matteo-portfolio-catalog"
+account_id = "c8aaf757bb630f4baecb4d4914a1d336"
+main = "worker.mjs"
+compatibility_date = "2026-10-08"
+workers_dev = true
+
+[triggers]
+crons = ["17 3 * * *"]
+
+[vars]
+SOURCE_MODE = "profile"
+EXPECTED_PROFILE_URL = "https://vimeo.com/matteocataldo"
+# Empty: use /me (token belonging to Matteo). Otherwise enter his numeric user ID.
+VIMEO_USER_ID = ""
+VIMEO_SHOWCASE_ID = ""
+SYNC_INTERVAL_HOURS = "24"
+
+[[kv_namespaces]]
+binding = "CATALOG"
+id = "6d73b2e27f964cf392d0a2bc52e1d2a6"

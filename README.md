@@ -1,5 +1,11 @@
 # Matteo Cataldo — V3 / Portfolio essenziale
 
+## Aggiornamento automatico Vimeo
+
+Servizio Cloudflare pronto in [services/vimeo-catalog](services/vimeo-catalog/README.md): sincronizzazione giornaliera dal profilo, futura Showcase configurabile, token solo server-side. Configurare `public/catalog-config.json` per attivare il collegamento; con endpoint vuoto o non disponibile resta il catalogo incluso nella build. Non sono necessari deploy per i nuovi video dopo l'attivazione iniziale. Le sitemap statiche non si aggiornano automaticamente: dettagli e limiti SEO nella guida del servizio.
+
+Per indicizzazione, metadati, sitemap e verifiche post-deploy vedere [SEO.md](SEO.md).
+
 Video in primo piano, miniature scorrevoli, una fascia con artista/cliente e titolo. Nessuna hero, titolo «Lavori», introduzione, ricerca o componente AI. About e Contact sono viste accessibili dal menu, non sezioni raggiunte scorrendo.
 
 ## Avvio e verifiche

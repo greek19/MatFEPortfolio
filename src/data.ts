@@ -20,7 +20,8 @@ export const categoryLabels: Record<Category, Record<Lang,string>> = {
 export function plainText(html:string) {
   return html.replace(/<br\s*\/?\s*>/gi,'\n').replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#0?39;|&apos;/g,"'").replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,' ').replace(/\r/g,'').replace(/\n{3,}/g,'\n\n').trim().normalize('NFC')
 }
-export const projects: Project[] = snapshot.videos.map((raw,index) => {
+export type VideoSnapshot = typeof snapshot
+export function projectsFromSnapshot(input:VideoSnapshot):Project[] { return input.videos.map((raw,index) => {
   const override = overrides[raw.id] ?? {}
   const parts = raw.title.normalize('NFC').split('|').map(s => s.trim())
   const description = plainText(raw.description)
@@ -42,5 +43,6 @@ export const projects: Project[] = snapshot.videos.map((raw,index) => {
     description:{it:[client,title,variant].filter(Boolean).join(' — '),en:[client,title,variant].filter(Boolean).join(' — ')},
     statement:{it:description,en:description},
   }
-})
+}) }
+export const projects: Project[] = projectsFromSnapshot(snapshot)
 export const importReport = { total:snapshot.total, fetchedAt:snapshot.fetchedAt, missingCredits:projects.filter(p => !p.credits.editor || !p.credits.director).map(p => p.video.id) }

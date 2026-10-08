@@ -22,21 +22,24 @@ function Video({ project, lang }: { project: Project; lang: Lang }) {
     return () => observer.disconnect()
   }, [])
   useEffect(() => {
-    if (!ready || !iframe.current || project.video.provider !== 'vimeo') return
+    if (!iframe.current || project.video.provider !== 'vimeo') return
     const instance = new Player(iframe.current); player.current = instance
     instance.on('play', () => setPlaying(true)); instance.on('pause', () => setPlaying(false))
     instance.on('timeupdate', (event: { seconds:number; duration:number }) => setTime(event))
     instance.on('error', () => setError(true))
-    instance.ready().then(() => instance.play()).catch(() => setVisible(true))
+    instance.ready().catch(() => setError(true))
     return () => { instance.destroy().catch(() => undefined); player.current = null }
-  }, [ready, project.video.id, project.video.provider])
+  }, [project.video.id, project.video.provider])
+  useEffect(() => {
+    if (ready) player.current?.play().catch(() => setVisible(true))
+  }, [ready])
   useEffect(() => () => clearTimeout(timer.current), [])
   const reveal = () => { setVisible(true); clearTimeout(timer.current); timer.current = setTimeout(() => setVisible(false), 1700) }
   const toggle = () => { const action = playing ? player.current?.pause() : player.current?.play(); action?.catch(() => setError(true)) }
   return <div className={`video-shell${visible || !playing ? ' show-controls' : ''}`} ref={shell} onPointerMove={reveal} onPointerDown={reveal}>
     <img className="video-bg" src={project.poster} alt="" aria-hidden="true" />
-    {!ready ? <button className="video-start" onClick={() => setReady(true)}><Play /> Play</button> : project.video.provider === 'youtube' ? <iframe src={`https://www.youtube-nocookie.com/embed/${project.video.id}?autoplay=1&mute=1&playsinline=1`} title={project.title} allow="autoplay; fullscreen" allowFullScreen /> : <>
-      <iframe ref={iframe} src={`https://player.vimeo.com/video/${project.video.id}?autoplay=1&muted=1&controls=0&playsinline=1&dnt=1`} title={project.title} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen />
+    {project.video.provider === 'youtube' ? <iframe src={`https://www.youtube-nocookie.com/embed/${project.video.id}?autoplay=${ready?1:0}&mute=1&playsinline=1`} title={project.title} allow="autoplay; fullscreen" allowFullScreen /> : <>
+      <iframe ref={iframe} src={`https://player.vimeo.com/video/${project.video.id}?autoplay=0&muted=1&controls=0&playsinline=1&dnt=1`} title={project.title} allow="autoplay; fullscreen; picture-in-picture" allowFullScreen />
       <button className="video-surface" onClick={toggle} aria-label={playing ? (lang === 'it' ? 'Pausa video' : 'Pause video') : 'Play video'} />
       <div className="video-controls"><button onClick={toggle} aria-label={playing ? 'Pause' : 'Play'}>{playing ? <Pause size={18} /> : <Play size={18} />}</button><span>{timeLabel(time.seconds)}</span><input type="range" aria-label={lang === 'it' ? 'Minutaggio' : 'Video position'} min={0} max={time.duration || 1} step={.1} value={time.seconds} onChange={e => player.current?.setCurrentTime(Number(e.target.value)).catch(() => setError(true))} /><span>{timeLabel(time.duration)}</span><button onClick={() => player.current?.setMuted(!muted).then(() => setMuted(!muted)).catch(() => setError(true))} aria-label={muted ? (lang === 'it' ? 'Attiva audio' : 'Unmute') : (lang === 'it' ? 'Disattiva audio' : 'Mute')}>{muted ? <VolumeX size={18} /> : <Volume2 size={18} />}</button><button aria-label="Fullscreen" onClick={() => shell.current?.requestFullscreen().catch(() => undefined)}><Maximize size={16} /></button></div>
     </>}
